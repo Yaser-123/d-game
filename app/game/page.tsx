@@ -4,20 +4,20 @@ import Link from 'next/link'
 import { AcceptButton, DeclineButton, CancelButton } from '@/components/InvitationButtons'
 
 
-type ActiveBattle = {
+type ActiveChallenge = {
   id: string
   status: string
-  turn_counter: number
-  player1_id: string
-  player2_id: string
-  p1: { handle: string } | null
-  p2: { handle: string } | null
+  type: string
+  challenger_id: string
+  challenged_id: string
+  challenger: { handle: string } | null
+  target: { handle: string } | null
 }
 
-type Invitation = {
+type PendingChallenge = {
   id: string
   challenger_id: string
-  target_id: string
+  challenged_id: string
   status: string
   created_at: string
   challenger: { handle: string } | null
@@ -59,41 +59,41 @@ export default async function GamePage() {
     )
   }
 
-  // Fetch active battles
-  const { data: activeBattlesData } = await supabase
-    .from('battles')
+  // Fetch active challenges
+  const { data: activeChallengesData } = await supabase
+    .from('challenges')
     .select(`
       id,
       status,
-      turn_counter,
-      player1_id,
-      player2_id,
-      p1:players!battles_player1_id_fkey(handle),
-      p2:players!battles_player2_id_fkey(handle)
+      type,
+      challenger_id,
+      challenged_id,
+      challenger:players!challenger_id(handle),
+      target:players!challenged_id(handle)
     `)
-    .or(`player1_id.eq.${user.id},player2_id.eq.${user.id}`)
+    .or(`challenger_id.eq.${user.id},challenged_id.eq.${user.id}`)
     .eq('status', 'ACTIVE')
     .order('updated_at', { ascending: false })
 
-  const activeBattles = (activeBattlesData as unknown as ActiveBattle[]) || []
+  const activeChallenges = (activeChallengesData as unknown as ActiveChallenge[]) || []
 
-  // Fetch pending invitations
-  const { data: invitationsData } = await supabase
-    .from('battle_invitations')
+  // Fetch pending challenges
+  const { data: pendingChallengesData } = await supabase
+    .from('challenges')
     .select(`
       id,
       challenger_id,
-      target_id,
+      challenged_id,
       status,
       created_at,
-      challenger:players!battle_invitations_challenger_id_fkey(handle),
-      target:players!battle_invitations_target_id_fkey(handle)
+      challenger:players!challenger_id(handle),
+      target:players!challenged_id(handle)
     `)
-    .or(`challenger_id.eq.${user.id},target_id.eq.${user.id}`)
+    .or(`challenger_id.eq.${user.id},challenged_id.eq.${user.id}`)
     .eq('status', 'PENDING')
     .order('created_at', { ascending: false })
 
-  const pendingInvitations = (invitationsData as unknown as Invitation[]) || []
+  const pendingChallenges = (pendingChallengesData as unknown as PendingChallenge[]) || []
 
   const isFinalSalvation = player.status === 'FINAL_SALVATION'
   const canFindPlayers = player.points >= 100 || isFinalSalvation
@@ -207,8 +207,8 @@ export default async function GamePage() {
             <div className="flex-1 panel p-6">
               <h3 className="text-sm font-bold tracking-widest text-muted-foreground mb-6">ACTIVE ENGAGEMENTS</h3>
               <div className="space-y-4">
-                {pendingInvitations.map(inv => {
-                  const isIncoming = inv.target_id === user.id
+                {pendingChallenges.map(inv => {
+                  const isIncoming = inv.challenged_id === user.id
                   const otherHandle = isIncoming ? inv.challenger?.handle : inv.target?.handle
                   
                   return (
@@ -235,17 +235,17 @@ export default async function GamePage() {
                   )
                 })}
 
-                {activeBattles.map(battle => {
-                  const isP1 = battle.player1_id === user.id
-                  const opponentHandle = isP1 ? battle.p2?.handle : battle.p1?.handle
+                {activeChallenges.map(challenge => {
+                  const isP1 = challenge.challenger_id === user.id
+                  const opponentHandle = isP1 ? challenge.target?.handle : challenge.challenger?.handle
                   return (
-                    <div key={battle.id} className="p-4 border border-border/50 rounded bg-black/40 hover:border-danger/50 transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div key={challenge.id} className="p-4 border border-border/50 rounded bg-black/40 hover:border-danger/50 transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                       <div>
                         <h4 className="text-lg font-bold text-white tracking-tight">vs {opponentHandle}</h4>
-                        <p className="text-[10px] font-mono text-muted-foreground mt-1">TURN {battle.turn_counter} &bull; {battle.status}</p>
+                        <p className="text-[10px] font-mono text-muted-foreground mt-1">{challenge.type.replace('_', ' ')} &bull; {challenge.status}</p>
                       </div>
-                      <Link href={`/battle/${battle.id}`} className="btn btn-outline border-border/50 text-xs px-4 h-8 tracking-widest hover:border-white">
-                        ENTER ARENA &rarr;
+                      <Link href={`/challenge/${challenge.id}`} className="btn btn-outline border-border/50 text-xs px-4 h-8 tracking-widest hover:border-white">
+                        ENTER DUEL &rarr;
                       </Link>
                     </div>
                   )

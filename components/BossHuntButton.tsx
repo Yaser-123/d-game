@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { startPvEEncounter } from '@/app/actions/pve'
+import { challengeBossBot } from '@/app/actions/challenge'
 
 export function BossHuntButton({ bossId }: { bossId: string }) {
   const [loading, setLoading] = useState(false)
@@ -12,7 +12,7 @@ export function BossHuntButton({ bossId }: { bossId: string }) {
       disabled={loading}
       onClick={async () => {
         setLoading(true)
-        const res = await startPvEEncounter(bossId)
+        const res = await challengeBossBot(bossId)
         if (res?.error) {
           alert(res.error)
           setLoading(false)

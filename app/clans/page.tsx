@@ -115,7 +115,7 @@ export default async function ClansPage() {
                 <div>
                   <h4 className="text-xs font-mono text-white tracking-widest border-b border-border/50 pb-2 mb-4">ROSTER ({clanRoster.length}/50)</h4>
                   <div className="space-y-2">
-                    {clanRoster.map((m: unknown) => (
+                    {clanRoster.map((m: any) => (
                       <div key={m.player_id} className="flex justify-between items-center p-3 border border-border/30 bg-black/20 text-sm font-mono">
                         <div className="flex items-center gap-3">
                           <span className={m.player_id === user.id ? 'text-white font-bold' : 'text-muted-foreground'}>
@@ -163,7 +163,7 @@ export default async function ClansPage() {
                         <div className="pt-2">
                           <span className="text-[10px] font-mono text-muted-foreground block mb-2">PENDING OUTBOUND INVITATIONS</span>
                           <div className="space-y-1">
-                            {outboundInvites.map((inv: unknown) => (
+                            {outboundInvites.map((inv: any) => (
                               <div key={inv.id} className="flex justify-between items-center text-xs font-mono bg-black/40 p-2 border border-border/30">
                                 <span>{inv.invitee?.handle}</span>
                                 <ActionButton action={cancelInvite.bind(null, inv.id)} label="CANCEL" />
@@ -197,7 +197,7 @@ export default async function ClansPage() {
             <section className="panel border border-emerald-500/30 bg-emerald-500/5 p-6">
               <h3 className="text-sm font-mono text-white tracking-widest mb-4 border-b border-emerald-500/30 pb-2">INCOMING INVITATIONS</h3>
               <div className="space-y-3">
-                {incomingInvites.map((inv: unknown) => (
+                {incomingInvites.map((inv: any) => (
                   <div key={inv.id} className="flex justify-between items-center p-3 bg-black/40 border border-border/50 text-sm font-mono">
                     <div>
                       <span className="text-white font-bold">[{inv.clan?.tag}] {inv.clan?.name}</span>
@@ -225,7 +225,7 @@ export default async function ClansPage() {
                   NO CLANS ESTABLISHED
                 </div>
               ) : (
-                allClans.map((c: unknown) => (
+                allClans.map((c: any) => (
                   <div key={c.id} className="panel p-4 border border-border/50 bg-black/20 text-sm font-mono">
                     <div className="flex justify-between items-start mb-2">
                       <div className="font-bold text-white">[{c.tag}] {c.name}</div>

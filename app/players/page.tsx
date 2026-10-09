@@ -1,7 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { EngageButton } from '@/components/EngageButton'
+import { ChallengeButton } from '@/components/ChallengeButton'
 
 
 type PublicPlayer = {
@@ -49,24 +49,24 @@ export default async function PlayersPage() {
 
   const canEngage = currentPlayer ? (currentPlayer.points >= 100 || currentPlayer.status === 'FINAL_SALVATION') : false
 
-  // Fetch pending invitations
-  const { data: invitationsData } = await supabase
-    .from('battle_invitations')
-    .select('id, challenger_id, target_id, status')
+  // Fetch pending challenges
+  const { data: challengesData } = await supabase
+    .from('challenges')
+    .select('id, challenger_id, challenged_id, status')
     .eq('status', 'PENDING')
-    .or(`challenger_id.eq.${user.id},target_id.eq.${user.id}`)
+    .or(`challenger_id.eq.${user.id},challenged_id.eq.${user.id}`)
 
-  const pendingInvitations = invitationsData || []
+  const pendingChallenges = challengesData || []
 
-  // Fetch active battles
-  const { data: activeBattlesData } = await supabase
-    .from('battles')
-    .select('id, player1_id, player2_id')
+  // Fetch active challenges
+  const { data: activeChallengesData } = await supabase
+    .from('challenges')
+    .select('id, challenger_id, challenged_id')
     .eq('status', 'ACTIVE')
-    .or(`player1_id.eq.${user.id},player2_id.eq.${user.id}`)
+    .or(`challenger_id.eq.${user.id},challenged_id.eq.${user.id}`)
 
-  const activeBattles = activeBattlesData || []
-  const isInBattle = activeBattles.length > 0
+  const activeChallenges = activeChallengesData || []
+  const isInChallenge = activeChallenges.length > 0
 
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-5xl mt-4 sm:mt-8 space-y-8">
@@ -102,8 +102,8 @@ export default async function PlayersPage() {
             <div className="space-y-4">
               {publicPlayers.map((p) => {
                 const isMe = p.player_id === user.id
-                const activeBattleWithThem = activeBattles.find(b => b.player1_id === p.player_id || b.player2_id === p.player_id)
-                const pendingInvite = pendingInvitations.find(i => i.challenger_id === p.player_id || i.target_id === p.player_id)
+                const activeChallengeWithThem = activeChallenges.find(c => c.challenger_id === p.player_id || c.challenged_id === p.player_id)
+                const pendingChallenge = pendingChallenges.find(c => c.challenger_id === p.player_id || c.challenged_id === p.player_id)
 
                 return (
                   <div key={p.player_id} className="panel p-5 hover:border-danger/40 transition-colors flex flex-col sm:flex-row justify-between gap-4">
@@ -120,21 +120,21 @@ export default async function PlayersPage() {
                         <span className="text-[10px] font-mono text-muted-foreground mt-4 sm:mt-0 px-4 h-8 flex items-center">
                           YOU
                         </span>
-                      ) : activeBattleWithThem ? (
-                        <Link href={`/battle/${activeBattleWithThem.id}`} className="btn btn-outline border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10 text-[10px] mt-4 sm:mt-0 px-3 h-6 tracking-widest flex items-center justify-center">
-                          IN BATTLE
+                      ) : activeChallengeWithThem ? (
+                        <Link href={`/challenge/${activeChallengeWithThem.id}`} className="btn btn-outline border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10 text-[10px] mt-4 sm:mt-0 px-3 h-6 tracking-widest flex items-center justify-center">
+                          IN CHALLENGE
                         </Link>
-                      ) : pendingInvite ? (
+                      ) : pendingChallenge ? (
                         <Link href="/game" className="btn btn-outline border-warning/50 text-warning hover:bg-warning/10 text-[10px] mt-4 sm:mt-0 px-3 h-6 tracking-widest flex items-center justify-center">
-                          PENDING INVITATION
+                          PENDING CHALLENGE
                         </Link>
-                      ) : isInBattle ? (
+                      ) : isInChallenge ? (
                         <button disabled className="btn btn-outline border-border/20 text-muted-foreground/30 cursor-not-allowed text-[10px] mt-4 sm:mt-0 px-3 h-6 tracking-widest">
-                          YOU ARE IN BATTLE
+                          YOU ARE IN CHALLENGE
                         </button>
                       ) : canEngage ? (
                         <div className="mt-4 sm:mt-0">
-                          <EngageButton opponentId={p.player_id} />
+                          <ChallengeButton opponentId={p.player_id} />
                         </div>
                       ) : (
                         <button disabled className="btn btn-outline border-border/20 text-muted-foreground/30 cursor-not-allowed text-[10px] mt-4 sm:mt-0 px-3 h-6 tracking-widest">

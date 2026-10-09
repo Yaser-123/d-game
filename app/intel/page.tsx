@@ -41,7 +41,7 @@ export default async function IntelExchangePage() {
   const myListings = myListingsData || []
 
   // purchased listing ids to prevent duplicate purchases
-  const purchasedIds = new Set(purchasedIntel.map((p: unknown) => p.listing_id))
+  const purchasedIds = new Set(purchasedIntel.map((p: any) => p.listing_id))
   
   const canSell = player?.status === 'ACTIVE'
   const canBuy = player?.status === 'ACTIVE'
@@ -80,7 +80,7 @@ export default async function IntelExchangePage() {
                   <p className="text-xs font-mono text-muted-foreground tracking-widest">NO ACQUIRED INTEL</p>
                 </div>
               ) : (
-                purchasedIntel.map((p: unknown) => (
+                purchasedIntel.map((p: any) => (
                   <div key={p.id} className="panel p-5 border border-emerald-500/30 bg-emerald-500/5">
                     <div className="flex justify-between items-start mb-3">
                       <div>
@@ -118,7 +118,7 @@ export default async function IntelExchangePage() {
                   <p className="text-xs font-mono text-muted-foreground tracking-widest">MARKET IS EMPTY</p>
                 </div>
               ) : (
-                marketListings.map((l: unknown) => {
+                marketListings.map((l: any) => {
                   const affordable = (player?.points || 0) - l.price >= 100
                   const alreadyBought = purchasedIds.has(l.id)
                   
@@ -187,7 +187,7 @@ export default async function IntelExchangePage() {
                   NO ACTIVE LISTINGS
                 </div>
               ) : (
-                myListings.map((l: unknown) => (
+                myListings.map((l: any) => (
                   <div key={l.id} className={`panel p-4 border text-sm ${l.status === 'ACTIVE' ? 'border-border/50' : l.status === 'SOLD' ? 'border-emerald-500/30' : 'border-danger/30 opacity-60'}`}>
                     <div className="flex justify-between items-start mb-2">
                       <div className="font-bold">{l.title}</div>

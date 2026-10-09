@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { acceptInvitation, declineInvitation, cancelInvitation } from '@/app/actions/battle'
+import { acceptChallenge, declineChallenge, cancelChallenge } from '@/app/actions/challenge'
 
 export function AcceptButton({ inviteId }: { inviteId: string }) {
   const [loading, setLoading] = useState(false)
@@ -10,7 +10,7 @@ export function AcceptButton({ inviteId }: { inviteId: string }) {
   async function handleAction() {
     setLoading(true)
     setError(null)
-    const result = await acceptInvitation(inviteId)
+    const result = await acceptChallenge(inviteId)
     if (result && result.error) {
       setError(result.error)
       setLoading(false)
@@ -32,8 +32,7 @@ export function DeclineButton({ inviteId }: { inviteId: string }) {
   
   async function handleAction() {
     setLoading(true)
-    await declineInvitation(inviteId)
-    // No error handling needed for simple decline, but we could add it
+    await declineChallenge(inviteId)
   }
 
   return (
@@ -48,7 +47,7 @@ export function CancelButton({ inviteId }: { inviteId: string }) {
   
   async function handleAction() {
     setLoading(true)
-    await cancelInvitation(inviteId)
+    await cancelChallenge(inviteId)
   }
 
   return (

@@ -54,9 +54,9 @@ export default async function BossesPage() {
         <div className="panel border-warning/50 bg-warning/5 p-6 space-y-4">
           <h2 className="text-xl font-bold tracking-tighter text-warning">ACTIVE ENCOUNTER DETECTED</h2>
           <p className="text-sm text-foreground/80">You are currently engaged in a battle with a boss.</p>
-          <Link href={`/bosses/${activeEncounter.id}`} className="btn btn-primary inline-flex h-10 px-6 items-center tracking-widest">
+          <a href={`/bosses/${activeEncounter.id}`} className="btn btn-primary inline-flex h-10 px-6 items-center tracking-widest">
             RETURN TO BATTLE
-          </Link>
+          </a>
         </div>
       )}
 
