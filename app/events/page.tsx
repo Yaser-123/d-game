@@ -186,7 +186,7 @@ export default async function EventsPage() {
                           NO REGISTRATIONS
                         </div>
                       ) : (
-                        standings.slice(0, 10).map((s: Record<string, any>, idx: number) => (
+                        standings.slice(0, 10).map((s: Record<string, unknown>, idx: number) => (
                           <div key={s.player_id} className={`flex justify-between items-center p-2 text-sm font-mono ${s.player_id === user.id ? 'bg-white/10 border border-white/20' : 'border border-transparent'}`}>
                             <div className="flex items-center gap-3">
                               <span className={`text-xs ${idx === 0 ? 'text-emerald-500 font-bold' : 'text-muted-foreground'}`}>

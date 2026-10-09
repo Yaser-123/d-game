@@ -11,7 +11,7 @@ type Item = {
   category: string
   description: string
   equipment_slot: string | null
-  effects: any
+  effects: unknown
   is_stackable: boolean
   price: number
 }
