@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { BattleControls } from '@/components/BattleControls'
 
-export const instant = false
 
 type LogEntry = {
   id: string
@@ -36,9 +35,10 @@ type UsableItem = {
   }
 }
 
-export default async function BattlePage({ params }: { params: { battleId: string } }) {
+export default async function BattlePage({ params }: { params: Promise<{ battleId: string }> }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const resolvedParams = await params
   
   if (!user) {
     redirect('/login')
@@ -53,7 +53,7 @@ export default async function BattlePage({ params }: { params: { battleId: strin
       p2:players!battles_player2_id_fkey(id, handle),
       winner:players!battles_winner_id_fkey(handle)
     `)
-    .eq('id', params.battleId)
+    .eq('id', resolvedParams.battleId)
     .single()
 
   if (error || !battle) {

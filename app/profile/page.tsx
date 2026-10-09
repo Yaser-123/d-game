@@ -2,7 +2,6 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-export const instant = false
 
 export default async function ProfilePage() {
   const supabase = await createClient()
@@ -45,7 +44,7 @@ export default async function ProfilePage() {
     .order('created_at', { ascending: false })
     .limit(5)
 
-  const sigil = player.sigils?.[0]
+  const sigil = Array.isArray(player.sigils) ? player.sigils[0] : player.sigils
 
   return (
     <div className="container mx-auto p-4 sm:p-6 max-w-4xl mt-4 sm:mt-8 space-y-8 sm:space-y-12">

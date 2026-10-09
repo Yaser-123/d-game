@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { PurchaseIntelButton, CancelIntelButton } from '@/components/IntelActionButtons'
 import { CreateIntelForm } from '@/components/CreateIntelForm'
 
-export const instant = false
 
 export default async function IntelExchangePage() {
   const supabase = await createClient()

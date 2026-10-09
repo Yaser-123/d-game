@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { AcceptButton, DeclineButton, CancelButton } from '@/components/InvitationButtons'
 
-export const instant = false
 
 type ActiveBattle = {
   id: string
@@ -40,11 +39,13 @@ export default async function GamePage() {
     .eq('id', user.id)
     .single()
 
-  if (!player || !player.sigils?.[0]) {
+  const sigilData = Array.isArray(player.sigils) ? player.sigils[0] : player.sigils;
+  if (!player || !sigilData) {
+    console.log('Game page redirecting to /initialize. Player:', player)
     redirect('/initialize')
   }
 
-  const sigil = player.sigils[0]
+  const sigil = sigilData
 
   if (player.status === 'ELIMINATED') {
     return (
@@ -151,6 +152,9 @@ export default async function GamePage() {
                     </Link>
                     <Link href="/intel" className="text-[10px] font-mono text-emerald-500 hover:text-white transition-colors mt-1">
                       INTEL EXCHANGE &rarr;
+                    </Link>
+                    <Link href="/bosses" className="text-[10px] font-mono text-emerald-500 hover:text-white transition-colors mt-1">
+                      SOLO BOSS HUNT &rarr;
                     </Link>
                     <Link href="/events" className="text-[10px] font-mono text-emerald-500 hover:text-white transition-colors mt-1">
                       GLOBAL EVENTS &rarr;

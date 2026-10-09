@@ -17,6 +17,20 @@ export async function initializePlayer(formData: FormData) {
     return { error: 'Handle must be between 3 and 20 characters' }
   }
 
+  // Idempotency check: If they are already fully initialized, return their existing Sigil
+  const { data: existingPlayer, error: existingErr } = await supabase
+    .from('players')
+    .select('id, sigils(name, basic_ability, limitation)')
+    .eq('id', user.id)
+    .single()
+    
+  console.log('Idempotency check result:', existingPlayer, 'error:', existingErr)
+
+  const existingSigil = Array.isArray(existingPlayer?.sigils) ? existingPlayer.sigils[0] : existingPlayer?.sigils;
+  if (existingSigil) {
+    return { success: true, sigil: existingSigil }
+  }
+
   // Generate sigil until we succeed or max retries hit
   let success = false
   let attempts = 0

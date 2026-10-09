@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { EngageButton } from '@/components/EngageButton'
 
-export const instant = false
 
 type PublicPlayer = {
   player_id: string

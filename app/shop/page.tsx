@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { PurchaseButton } from '@/components/PurchaseButton'
 
-export const instant = false
 
 type Item = {
   id: string

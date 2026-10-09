@@ -83,3 +83,13 @@ D-Game is a serious, mysterious survival game with psychological tension and com
 - ✅ **DO** use `border` to separate content areas rather than shadows.
 - ❌ **DON'T** use gradients, heavy box-shadows, or complex visual filters (backdrop-filter) that harm low-end device performance.
 - ❌ **DON'T** use emoji as structural icons; rely on minimal text symbols (e.g., `[ ]`, `?`) or lightweight SVG if necessary.
+
+## Combat Visual System
+
+### Art Direction
+- **Aesthetic**: Dark, anime-inspired supernatural survival.
+- **Environments**: Dark ruined arenas, abandoned cities with atmospheric fog, embers, and cinematic lighting.
+- **Characters**: Original character designs with clean silhouettes, detailed streetwear/armor, and restrained visual effects.
+- **Animations**: Lightweight 2D CSS-based animations reacting to server-authoritative state changes (idle, hit, attack, defend, heal, abilities). Supports prefers-reduced-motion.
+- **Implementation**: Avoid heavy 3D rendering in favor of fast-loading WebP/PNG assets and CSS transforms. All assets stored locally in public/images/.
+

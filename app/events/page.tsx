@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { RegisterButton, SubmitBattleForm, ClaimRewardButton } from '@/components/EventActionButtons'
 
-export const instant = false
 
 export default async function EventsPage() {
   const supabase = await createClient()

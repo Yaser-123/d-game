@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { ActionButton, CreateClanForm, InvitePlayerForm } from '@/components/ClanActionButtons'
 import { respondToInvite, leaveClan, disbandClan, removeMember, cancelInvite, transferLeadership } from '@/app/actions/clans'
 
-export const instant = false
 
 export default async function ClansPage() {
   const supabase = await createClient()
