@@ -18,19 +18,27 @@ export default async function BossesPage() {
     .eq('id', user.id)
     .single()
 
-  if (!player || player.status !== 'ACTIVE') {
+  if (!player || player.status === 'ELIMINATED') {
     redirect('/game')
   }
 
-  // Fetch active PvE encounters
-  const { data: activeEncounterData } = await supabase
-    .from('pve_encounters')
-    .select('id')
-    .eq('player_id', user.id)
-    .eq('status', 'ACTIVE')
+  // Map bot IDs to recognize if an active challenge is with a boss
+  const botIds = [
+    '11111111-1111-4111-8111-111111111111', // Hollow Knight
+    '22222222-2222-4222-8222-222222222222', // Phantom
+    '33333333-3333-4333-8333-333333333333'  // Executioner
+  ]
+
+  // Fetch active boss challenges
+  const { data: activeChallengeData } = await supabase
+    .from('challenges')
+    .select('id, challenged_id')
+    .eq('challenger_id', user.id)
+    .in('challenged_id', botIds)
+    .in('status', ['PENDING', 'ACTIVE'])
     .limit(1)
 
-  const activeEncounter = activeEncounterData?.[0]
+  const activeChallenge = activeChallengeData?.[0]
 
   // Fetch bosses
   const { data: bosses } = await supabase
@@ -50,13 +58,13 @@ export default async function BossesPage() {
         </Link>
       </div>
 
-      {activeEncounter && (
+      {activeChallenge && (
         <div className="panel border-warning/50 bg-warning/5 p-6 space-y-4">
           <h2 className="text-xl font-bold tracking-tighter text-warning">ACTIVE ENCOUNTER DETECTED</h2>
-          <p className="text-sm text-foreground/80">You are currently engaged in a battle with a boss.</p>
-          <a href={`/bosses/${activeEncounter.id}`} className="btn btn-primary inline-flex h-10 px-6 items-center tracking-widest">
-            RETURN TO BATTLE
-          </a>
+          <p className="text-sm text-foreground/80">You are currently engaged in a duel with a boss.</p>
+          <Link href={`/challenge/${activeChallenge.id}`} className="btn btn-primary inline-flex h-10 px-6 items-center tracking-widest">
+            RETURN TO DUEL
+          </Link>
         </div>
       )}
 
@@ -97,7 +105,7 @@ export default async function BossesPage() {
             </div>
             
             <div className="p-6 pt-0 mt-auto">
-              {activeEncounter ? (
+              {activeChallenge ? (
                  <button disabled className="btn btn-outline w-full opacity-50 cursor-not-allowed tracking-widest text-xs h-12">
                    BUSY
                  </button>

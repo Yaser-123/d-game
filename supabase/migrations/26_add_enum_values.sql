@@ -1,0 +1,6 @@
+-- Migration: 26_add_enum_values.sql
+
+ALTER TYPE challenge_type ADD VALUE IF NOT EXISTS 'NIM_GAME';
+ALTER TYPE challenge_type ADD VALUE IF NOT EXISTS 'DEATHJACK';
+ALTER TYPE challenge_type ADD VALUE IF NOT EXISTS 'DOOMSDAY';
+ALTER TYPE challenge_type ADD VALUE IF NOT EXISTS 'MINEFIELD';

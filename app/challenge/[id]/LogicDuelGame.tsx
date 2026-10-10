@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import { submitLogicAnswer } from '@/app/actions/challenge'
 
-export default function LogicDuelGame({ challenge, userId }: { challenge: any, userId: string }) {
+export default function LogicDuelGame({ challenge, userId, mySigil }: { challenge: any, userId: string, mySigil?: any }) {
   const [answer, setAnswer] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sigilUsed, setSigilUsed] = useState(false)
+  const [sigilMessage, setSigilMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const publicState = challenge.public_state || {}
@@ -81,7 +83,37 @@ export default function LogicDuelGame({ challenge, userId }: { challenge: any, u
             WARNING: Opponent has submitted an answer.
           </p>
         )}
+
+        {mySigil && !sigilUsed && !mySubmitted && (
+          <div className="mt-6 border-t border-border/20 pt-6">
+            <button 
+              className="btn btn-outline border-purple-500/50 text-purple-400 hover:bg-purple-500/10 w-full"
+              onClick={() => {
+                setSigilUsed(true)
+                setSigilMessage("The veil is lifted... You should probably eliminate the first option.")
+              }}
+            >
+              UNLEASH SIGIL: {mySigil.name}
+            </button>
+            <p className="text-[10px] text-muted-foreground mt-2 text-center uppercase tracking-widest">{mySigil.basic_ability}</p>
+          </div>
+        )}
       </div>
+
+      {sigilMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="panel max-w-md w-full p-8 border-purple-500/30 text-center animate-in fade-in zoom-in duration-300">
+            <h3 className="text-xl font-bold text-purple-400 tracking-widest mb-4 font-mono">SIGIL ACTIVATED: {mySigil?.name}</h3>
+            <p className="text-sm text-muted-foreground mb-8 leading-relaxed font-mono">{sigilMessage}</p>
+            <button 
+              className="btn bg-purple-500/20 text-purple-300 border border-purple-500/50 hover:bg-purple-500/40 w-full"
+              onClick={() => setSigilMessage(null)}
+            >
+              ACKNOWLEDGE
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

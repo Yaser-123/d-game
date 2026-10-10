@@ -4,8 +4,14 @@ import Link from 'next/link'
 import CodebreakerGame from './CodebreakerGame'
 import LogicDuelGame from './LogicDuelGame'
 import BluffDuelGame from './BluffDuelGame'
+import VoidChamberGame from './VoidChamberGame'
+import NimGame from './NimGame'
+import DeathjackGame from './DeathjackGame'
+import DoomsdayGame from './DoomsdayGame'
+import MinefieldGame from './MinefieldGame'
 
-export default async function ChallengeRoomPage({ params }: { params: { id: string } }) {
+export default async function ChallengeRoomPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -18,8 +24,35 @@ export default async function ChallengeRoomPage({ params }: { params: { id: stri
       p2:players!challenges_challenged_id_fkey(handle, points),
       winner:players!challenges_winner_id_fkey(handle)
     `)
-    .eq('id', params.id)
+    .eq('id', id)
     .single()
+
+  const { data: sigils } = await supabase.from('sigils').select('*').eq('player_id', user.id).limit(1)
+  const mySigil = sigils?.[0]
+
+  // Fetch usable utility items
+  const { data: inventoryData } = await supabase
+    .from('inventory')
+    .select(`
+      id,
+      quantity,
+      items (
+        id,
+        name,
+        effects
+      )
+    `)
+    .eq('player_id', user.id)
+    
+  const myItems = inventoryData
+    ?.filter(inv => inv.items?.effects?.heal || inv.items?.effects?.skip_turn)
+    .map(inv => ({
+      id: inv.id,
+      item_id: inv.items.id,
+      name: inv.items.name,
+      quantity: inv.quantity,
+      effects: inv.items.effects
+    })) || []
 
   if (!challenge) {
     return (
@@ -100,9 +133,14 @@ export default async function ChallengeRoomPage({ params }: { params: { id: stri
 
       {challenge.status === 'ACTIVE' && (
         <div className="mt-8">
-          {challenge.type === 'CODEBREAKER' && <CodebreakerGame challenge={safeChallenge} userId={user.id} />}
-          {challenge.type === 'LOGIC_DUEL' && <LogicDuelGame challenge={safeChallenge} userId={user.id} />}
-          {challenge.type === 'BLUFF_DUEL' && <BluffDuelGame challenge={safeChallenge} userId={user.id} />}
+          {challenge.type === 'CODEBREAKER' && <CodebreakerGame challenge={safeChallenge} userId={user.id} mySigil={mySigil} />}
+          {challenge.type === 'LOGIC_DUEL' && <LogicDuelGame challenge={safeChallenge} userId={user.id} mySigil={mySigil} />}
+          {challenge.type === 'BLUFF_DUEL' && <BluffDuelGame challenge={safeChallenge} userId={user.id} mySigil={mySigil} myItems={myItems} />}
+          {challenge.type === 'VOID_CHAMBER' && <VoidChamberGame challenge={safeChallenge} userId={user.id} mySigil={mySigil} myItems={myItems} />}
+          {challenge.type === 'NIM_GAME' && <NimGame challenge={safeChallenge} userId={user.id} mySigil={mySigil} myItems={myItems} />}
+          {challenge.type === 'DEATHJACK' && <DeathjackGame challenge={safeChallenge} userId={user.id} mySigil={mySigil} myItems={myItems} />}
+          {challenge.type === 'DOOMSDAY' && <DoomsdayGame challenge={safeChallenge} userId={user.id} mySigil={mySigil} myItems={myItems} />}
+          {challenge.type === 'MINEFIELD' && <MinefieldGame challenge={safeChallenge} userId={user.id} mySigil={mySigil} myItems={myItems} />}
         </div>
       )}
     </div>

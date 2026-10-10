@@ -3,9 +3,11 @@
 import { useState } from 'react'
 import { submitCodebreakerGuess } from '@/app/actions/challenge'
 
-export default function CodebreakerGame({ challenge, userId }: { challenge: any, userId: string }) {
+export default function CodebreakerGame({ challenge, userId, mySigil }: { challenge: any, userId: string, mySigil?: any }) {
   const [guess, setGuess] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sigilUsed, setSigilUsed] = useState(false)
+  const [sigilMessage, setSigilMessage] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const publicState = challenge.public_state || {}
@@ -100,6 +102,36 @@ export default function CodebreakerGame({ challenge, userId }: { challenge: any,
         <div className="text-center p-6 border border-dashed border-border/50 rounded bg-black/20">
           <p className="text-sm font-mono text-muted-foreground">You are the Setter.</p>
           <p className="text-xs mt-2 text-muted-foreground/70">Wait for your opponent to break the code. If they fail, you win.</p>
+        </div>
+      )}
+
+      {mySigil && !sigilUsed && isGuesser && attemptsLeft > 0 && (
+        <div className="mt-6 border-t border-border/20 pt-6">
+          <button 
+            className="btn btn-outline border-purple-500/50 text-purple-400 hover:bg-purple-500/10 w-full"
+            onClick={() => {
+              setSigilUsed(true)
+              setSigilMessage("The sequence resonates... One of the digits in the combination is exactly 4.")
+            }}
+          >
+            UNLEASH SIGIL: {mySigil.name}
+          </button>
+          <p className="text-[10px] text-muted-foreground mt-2 text-center uppercase tracking-widest">{mySigil.basic_ability}</p>
+        </div>
+      )}
+
+      {sigilMessage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="panel max-w-md w-full p-8 border-purple-500/30 text-center animate-in fade-in zoom-in duration-300">
+            <h3 className="text-xl font-bold text-purple-400 tracking-widest mb-4 font-mono">SIGIL ACTIVATED: {mySigil?.name}</h3>
+            <p className="text-sm text-muted-foreground mb-8 leading-relaxed font-mono">{sigilMessage}</p>
+            <button 
+              className="btn bg-purple-500/20 text-purple-300 border border-purple-500/50 hover:bg-purple-500/40 w-full"
+              onClick={() => setSigilMessage(null)}
+            >
+              ACKNOWLEDGE
+            </button>
+          </div>
         </div>
       )}
     </div>

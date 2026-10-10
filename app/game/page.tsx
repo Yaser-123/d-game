@@ -203,7 +203,7 @@ export default async function GamePage() {
             </div>
           </div>
 
-          {activeBattles.length > 0 || pendingInvitations.length > 0 ? (
+          {activeChallenges.length > 0 || pendingChallenges.length > 0 ? (
             <div className="flex-1 panel p-6">
               <h3 className="text-sm font-bold tracking-widest text-muted-foreground mb-6">ACTIVE ENGAGEMENTS</h3>
               <div className="space-y-4">
@@ -253,16 +253,32 @@ export default async function GamePage() {
               </div>
               <div className="mt-8 pt-6 border-t border-border/30">
                 {canFindPlayers ? (
-                  <Link 
-                    href="/players" 
-                    className="btn btn-danger w-full sm:w-auto px-8 h-10 text-xs tracking-widest relative overflow-hidden inline-flex items-center justify-center"
-                  >
-                    <span className="relative z-10 font-bold">FIND MORE PLAYERS</span>
-                  </Link>
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <Link 
+                      href="/players" 
+                      className="btn btn-danger w-full sm:w-auto px-8 h-10 text-xs tracking-widest relative overflow-hidden inline-flex items-center justify-center"
+                    >
+                      <span className="relative z-10 font-bold">FIND MORE PLAYERS</span>
+                    </Link>
+                    <Link 
+                      href="/bosses" 
+                      className="btn btn-outline border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10 w-full sm:w-auto px-8 h-10 text-xs tracking-widest inline-flex items-center justify-center transition-colors"
+                    >
+                      <span className="font-bold">SOLO BOSS HUNT</span>
+                    </Link>
+                  </div>
                 ) : (
-                  <button disabled className="btn btn-outline border-border/20 text-muted-foreground/30 cursor-not-allowed w-full sm:w-auto px-8 h-10 text-xs tracking-widest">
-                    INSUFFICIENT POINTS FOR NEW BATTLES
-                  </button>
+                  <div className="flex flex-col sm:flex-row items-center gap-4">
+                    <button disabled className="btn btn-outline border-border/20 text-muted-foreground/30 cursor-not-allowed w-full sm:w-auto px-8 h-10 text-xs tracking-widest">
+                      INSUFFICIENT POINTS
+                    </button>
+                    <Link 
+                      href="/bosses" 
+                      className="btn btn-outline border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10 w-full sm:w-auto px-8 h-10 text-xs tracking-widest inline-flex items-center justify-center transition-colors"
+                    >
+                      <span className="font-bold">SOLO BOSS HUNT</span>
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>
@@ -277,17 +293,33 @@ export default async function GamePage() {
                 </p>
                 
                 {canFindPlayers ? (
-                  <Link 
-                    href="/players" 
-                    className="btn btn-danger w-full sm:w-auto px-12 h-12 text-sm tracking-widest group relative overflow-hidden inline-flex items-center justify-center"
-                  >
-                    <span className="relative z-10 font-bold">FIND PLAYERS</span>
-                    <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                  </Link>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <Link 
+                      href="/players" 
+                      className="btn btn-danger w-full sm:w-auto px-12 h-12 text-sm tracking-widest group relative overflow-hidden inline-flex items-center justify-center"
+                    >
+                      <span className="relative z-10 font-bold">FIND PLAYERS</span>
+                      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                    </Link>
+                    <Link 
+                      href="/bosses" 
+                      className="btn btn-outline border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10 w-full sm:w-auto px-12 h-12 text-sm tracking-widest inline-flex items-center justify-center transition-colors"
+                    >
+                      <span className="font-bold">SOLO BOSS HUNT</span>
+                    </Link>
+                  </div>
                 ) : (
-                  <button disabled className="btn btn-outline border-border/20 text-muted-foreground/30 cursor-not-allowed w-full sm:w-auto px-12 h-12 text-sm tracking-widest">
-                    INSUFFICIENT POINTS
-                  </button>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button disabled className="btn btn-outline border-border/20 text-muted-foreground/30 cursor-not-allowed w-full sm:w-auto px-12 h-12 text-sm tracking-widest">
+                      INSUFFICIENT POINTS
+                    </button>
+                    <Link 
+                      href="/bosses" 
+                      className="btn btn-outline border-emerald-500/50 text-emerald-500 hover:bg-emerald-500/10 w-full sm:w-auto px-12 h-12 text-sm tracking-widest inline-flex items-center justify-center transition-colors"
+                    >
+                      <span className="font-bold">SOLO BOSS HUNT</span>
+                    </Link>
+                  </div>
                 )}
               </div>
             </div>
