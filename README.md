@@ -6,6 +6,17 @@ D-Game is an intense, terminal-aesthetic web application where players engage in
 
 Play against perfect-play AI Bosses or challenge other operatives in live PvP duels.
 
+🔴 **LIVE DEMO (Render):** [https://d-game-iydg.onrender.com/](https://d-game-iydg.onrender.com/)
+
+## 📸 Screenshots
+
+*(To display the screenshots you shared, simply drag and drop your image files directly into this README on GitHub, or place them in an `assets/` folder in your repo and update these links!)*
+
+![The Arena / Hub](assets/arena.png)
+![Solo Boss Hunt](assets/bosses.png)
+![Void Chamber Gameplay](assets/void_chamber.png)
+![Black Market / Tactical Gear](assets/black_market.png)
+
 ## 🎯 Features
 
 * **Strict Ledger Economy:** Your points are your life. Transactions are handled entirely via secure server-side PostgreSQL ledgers.
