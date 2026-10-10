@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { AcceptButton, DeclineButton, CancelButton } from '@/components/InvitationButtons'
-
+import { OutdoorMissions } from '@/components/OutdoorMissions'
 
 type ActiveChallenge = {
   id: string
@@ -185,6 +185,10 @@ export default async function GamePage() {
               </div>
             </div>
           </div>
+          
+          {/* AI Field Ops Module */}
+          <OutdoorMissions />
+          
         </div>
 
         {/* Right Column: Encounters / The Arena */}
