@@ -2,6 +2,21 @@ import { createClient } from '@/utils/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { ChallengeButton } from '@/components/ChallengeButton'
+import { GpsScanner } from '@/components/GpsScanner'
+import { MapPin } from 'lucide-react'
+
+// Haversine distance formula
+function getDistanceKM(lat1: number | null, lon1: number | null, lat2: number | null, lon2: number | null) {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return null
+  const R = 6371 // km
+  const dLat = (lat2 - lat1) * Math.PI / 180
+  const dLon = (lon2 - lon1) * Math.PI / 180
+  const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+            Math.sin(dLon/2) * Math.sin(dLon/2)
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+  return (R * c).toFixed(1)
+}
 
 
 type PublicPlayer = {
@@ -29,7 +44,7 @@ export default async function PlayersPage() {
   // Fetch current player status
   const { data: currentPlayer } = await supabase
     .from('players')
-    .select('status, points')
+    .select('status, points, latitude, longitude')
     .eq('id', user.id)
     .single()
 
@@ -104,11 +119,25 @@ export default async function PlayersPage() {
                 const isMe = p.player_id === user.id
                 const activeChallengeWithThem = activeChallenges.find(c => c.challenger_id === p.player_id || c.challenged_id === p.player_id)
                 const pendingChallenge = pendingChallenges.find(c => c.challenger_id === p.player_id || c.challenged_id === p.player_id)
+                const distance = getDistanceKM(currentPlayer?.latitude, currentPlayer?.longitude, p.latitude, p.longitude)
 
                 return (
-                  <div key={p.player_id} className="panel p-5 hover:border-danger/40 transition-colors flex flex-col sm:flex-row justify-between gap-4">
-                    <div className="space-y-1 flex-1">
-                      <h4 className="text-lg font-bold tracking-tight text-white">{p.handle}</h4>
+                  <div key={p.player_id} className="panel p-5 hover:border-danger/40 transition-colors flex flex-col sm:flex-row justify-between gap-4 relative overflow-hidden">
+                    {/* Background Distance Indicator */}
+                    {distance !== null && (
+                      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-emerald-500/5 to-transparent pointer-events-none" />
+                    )}
+                    
+                    <div className="space-y-1 flex-1 relative z-10">
+                      <div className="flex items-center gap-3">
+                        <h4 className="text-lg font-bold tracking-tight text-white">{p.handle}</h4>
+                        {distance !== null && (
+                          <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-500 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                            <MapPin className="w-3 h-3" />
+                            {distance} KM
+                          </span>
+                        )}
+                      </div>
                       <p className="text-xs font-mono text-danger tracking-widest">SIGIL: {p.sigil_name}</p>
                       <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                         {p.basic_ability}
@@ -155,26 +184,7 @@ export default async function PlayersPage() {
 
         {/* Sidebar / Proximity Module */}
         <div className="space-y-6">
-          <div className="panel p-6 border-warning/20 bg-warning/5 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4">
-              <span className="flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-warning/50"></span>
-              </span>
-            </div>
-            <h3 className="text-sm font-bold tracking-widest text-warning mb-2">PROXIMITY SYSTEM</h3>
-            <span className="inline-block text-[10px] font-mono bg-warning/10 text-warning px-2 py-1 rounded mb-4">
-              IN DEVELOPMENT
-            </span>
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Real-world localized detection is currently offline. Geographic triangulation and nearby-operative tracking will be initialized in a future update.
-            </p>
-            <div className="mt-6 h-24 bg-black/40 rounded border border-warning/10 flex items-center justify-center">
-              <div className="w-16 h-16 border border-warning/20 rounded-full flex items-center justify-center relative">
-                <div className="absolute inset-0 border border-warning/20 rounded-full animate-ping motion-reduce:hidden duration-3000"></div>
-                <div className="w-1 h-1 bg-warning rounded-full"></div>
-              </div>
-            </div>
-          </div>
+          <GpsScanner />
         </div>
 
       </div>
